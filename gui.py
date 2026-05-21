@@ -102,6 +102,22 @@ class SchedulerApp:
         y = (self.root.winfo_screenheight() - h) // 2
         self.root.geometry(f"{w}x{h}+{x}+{y}")
 
+        # 强制中文字体配置
+        _FONT = "Microsoft YaHei"
+        self.root.option_add("*Font", f"{{{_FONT}}} 10")
+        self.root.option_add("*TCombobox*Font", f"{{{_FONT}}} 10")
+        self.root.option_add("*TEntry*Font", f"{{{_FONT}}} 10")
+        self.root.option_add("*TLabel*Font", f"{{{_FONT}}} 10")
+        self.root.option_add("*TButton*Font", f"{{{_FONT}}} 10")
+        style = ttk.Style(self.root)
+        style.configure(".", font=(_FONT, 10))
+        style.configure("Treeview", font=(_FONT, 10), rowheight=28)
+        style.configure("Treeview.Heading", font=(_FONT, 10, "bold"))
+        style.configure("TNotebook.Tab", font=(_FONT, 10))
+        style.configure("TButton", font=(_FONT, 10))
+        style.configure("TLabel", font=(_FONT, 10))
+        style.configure("TRadiobutton", font=(_FONT, 10))
+
         # 状态变量
         self.processes: list[Process] = []
         self.schedule_result: ScheduleResult = None
