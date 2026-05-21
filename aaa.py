@@ -13,7 +13,6 @@ Python 3.8+
 
 import tkinter as tk
 from tkinter import ttk, messagebox, filedialog
-import threading
 import random
 import sys
 import os
@@ -296,11 +295,23 @@ except ImportError:
 import matplotlib
 matplotlib.use('TkAgg')
 
-# --- 中文字体配置 ---
+# --- 中文字体配置（确保甘特图中文正常显示）---
 import matplotlib.font_manager as fm
-_CN_FONTS = ['Microsoft YaHei', 'SimHei', 'STHeiti', 'WenQuanYi Micro Hei', 'sans-serif']
-matplotlib.rcParams['font.sans-serif'] = _CN_FONTS
+_cn_font_found = False
+for _cn in ['Microsoft YaHei', 'SimHei', 'STHeiti', 'WenQuanYi Micro Hei',
+            'PingFang SC', 'Noto Sans CJK SC', 'Source Han Sans CN']:
+    if any(_cn.lower() in f.name.lower() for f in fm.fontManager.ttflist):
+        matplotlib.rcParams['font.sans-serif'] = [_cn, 'DejaVu Sans']
+        _cn_font_found = True
+        break
+if not _cn_font_found:
+    matplotlib.rcParams['font.sans-serif'] = ['Microsoft YaHei', 'SimHei', 'DejaVu Sans']
 matplotlib.rcParams['axes.unicode_minus'] = False
+# 清除字体缓存以确保新配置生效
+try:
+    fm._load_fontmanager(try_read_cache=False)
+except Exception:
+    pass
 
 try:
     from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
