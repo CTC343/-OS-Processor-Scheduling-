@@ -7,7 +7,6 @@
 import tkinter as tk
 from tkinter import ttk, messagebox, filedialog
 import threading
-import time
 import random
 import os
 
@@ -22,19 +21,29 @@ except ImportError:
 try:
     import matplotlib
     matplotlib.use('TkAgg')
+    import matplotlib.font_manager as fm
+    # --- 中文字体配置（确保甘特图中文正常显示）---
+    _cn_font_found = False
+    for _cn in ['Microsoft YaHei', 'SimHei', 'STHeiti', 'WenQuanYi Micro Hei',
+                'PingFang SC', 'Noto Sans CJK SC', 'Source Han Sans CN']:
+        if any(_cn.lower() in f.name.lower() for f in fm.fontManager.ttflist):
+            matplotlib.rcParams['font.sans-serif'] = [_cn, 'DejaVu Sans']
+            _cn_font_found = True
+            break
+    if not _cn_font_found:
+        matplotlib.rcParams['font.sans-serif'] = ['Microsoft YaHei', 'SimHei', 'DejaVu Sans']
+    matplotlib.rcParams['axes.unicode_minus'] = False
+    # 清除字体缓存以确保新配置生效
+    try:
+        fm._load_fontmanager(try_read_cache=False)
+    except Exception:
+        pass
     import matplotlib.pyplot as plt
     from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
     from matplotlib.figure import Figure
-    import matplotlib.patches as mpatches
     HAS_MATPLOTLIB = True
 except ImportError:
     HAS_MATPLOTLIB = False
-
-try:
-    import openpyxl
-    HAS_OPENPYXL = True
-except ImportError:
-    HAS_OPENPYXL = False
 
 from models import Process, ProcessStatus, ScheduleResult
 from schedulers import FCFSScheduler, SJFScheduler, RRScheduler
