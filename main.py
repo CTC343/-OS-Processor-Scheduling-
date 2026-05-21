@@ -14,6 +14,10 @@ import os
 # 确保当前目录在搜索路径中
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
+# PyInstaller 打包后修正工作目录
+if getattr(sys, 'frozen', False):
+    os.chdir(os.path.dirname(sys.executable))
+
 from gui import SchedulerApp
 
 
